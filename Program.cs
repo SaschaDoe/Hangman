@@ -1,6 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 // https://github.com/cowtrix/gnuciDictionary
+
+using gnuciDictionary;
+
 IEnumerable<gnuciDictionary.Word> allwords = gnuciDictionary.EnglishDictionary.GetAllWords();
+
 
 while (true)
 {
@@ -13,14 +17,15 @@ while (true)
         throw new Exception("no words loaded");
     }
     
-    List<string> word =
+    List<Word> word =
         allwords.Where(u => u != null)
-            .Select(u => u.Value)
+            .Select(u => u)
             .ToList();
     var random = new Random().Next(word.Count);
     //get random word out of word list
     var word2 = word[random];
-    var output = word2.ToArray().Aggregate("", (current, c) => current + "_");
+    var word3 = word2.Value;
+    var output = word3.ToArray().Aggregate("", (current, c) => current + "_");
     
     Console.WriteLine(output);
     //when you have not guessed the word right this continues or you type quit
@@ -28,14 +33,14 @@ while (true)
     {
         var input = Console.ReadLine();
         inputs.Add(input);
-        if (word2.Contains(input))
+        if (word3.Contains(input))
         {
-            var indexes = inputs.Select(inp => word2.IndexOf(inp, StringComparison.Ordinal)).ToList();
+            var indexes = inputs.Select(inp => word3.IndexOf(inp, StringComparison.Ordinal)).ToList();
 
             output = "";
-            for (var i = 0; i < word2.ToArray().Length; i++)
+            for (var i = 0; i < word3.ToArray().Length; i++)
             {
-                var c = word2.ToArray()[i];
+                var c = word3.ToArray()[i];
                 var inputed = false;
                 foreach(var inde in indexes)
                 {
@@ -60,14 +65,14 @@ while (true)
             }
         }
         //TODO: add quit statement
-        if (input == word2)
+        if (input == word3)
         {
             break;
         }
 
         if (input == "quit")
         {
-            Console.WriteLine("Word was: " + word2);
+            Console.WriteLine("Word was -> " + word2);
             break;
         }
         
