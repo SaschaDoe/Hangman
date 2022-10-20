@@ -21,13 +21,18 @@ while (true)
         allwords.Where(u => u != null)
             .Select(u => u)
             .ToList();
-    var random = new Random().Next(word.Count);
-    //get random word out of word list
-    var word2 = word[random];
-    var word3 = word2.Value;
+    var word2 = new Word(" "," ", " ");
+    while (word2.Value.Contains(' '))
+    {
+        var random = new Random().Next(word.Count);
+        //get random word out of word list
+        word2 = word[random];
+    }
+    var word3 = word2.Value.ToLower();
     var output = word3.ToArray().Aggregate("", (current, c) => current + "_");
     
     Console.WriteLine(output);
+    
     //when you have not guessed the word right this continues or you type quit
     while (output.Contains('_'))
     {
@@ -35,7 +40,17 @@ while (true)
         inputs.Add(input);
         if (word3.Contains(input))
         {
-            var indexes = inputs.Select(inp => word3.IndexOf(inp, StringComparison.Ordinal)).ToList();
+            var indexes = new List<int>();
+            foreach (var inp in inputs)
+            {
+                for (int i = word3.IndexOf(inp); i > -1; i = word3.IndexOf(inp, i + 1))
+                {
+                    // for loop end when i=-1 ('a' not found)
+                    indexes.Add(i);
+                }
+            }
+            
+            //var indexes = inputs.Select(inp => word3.IndexOf(inp, StringComparison.Ordinal)).ToList();
 
             output = "";
             for (var i = 0; i < word3.ToArray().Length; i++)
