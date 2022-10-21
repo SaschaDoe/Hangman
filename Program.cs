@@ -1,47 +1,39 @@
 ﻿// See https://aka.ms/new-console-template for more information
 // https://github.com/cowtrix/gnuciDictionary
 
+using ConsoleApp1;
 using gnuciDictionary;
 
-IEnumerable<gnuciDictionary.Word> allwords = gnuciDictionary.EnglishDictionary.GetAllWords();
-
+var allWords = WordsLoader.ExtractAllEnglishWords().ToList();
+var userInterface = new ConsoleOutput();
 
 while (true)
 {
-    var score = 0;
     //Starting game of hangman
-    Console.WriteLine("New Game of Hangman ->");
-    var inputs = new List<string>();
-    if (allwords == null)
-    {
-        throw new Exception("no words loaded");
-    }
-    
-    List<Word> word =
-        allwords.Where(u => u != null)
-            .Select(u => u)
-            .ToList();
+    var score = 0;
+    var currentGameUserInputs = new List<string>();
     var word2 = new Word(" "," ", " ");
     while (word2.Value.Contains(' '))
     {
-        var random = new Random().Next(word.Count);
+        var random = new Random().Next(allWords.Count);
         //get random word out of word list
-        word2 = word[random];
+        word2 = allWords[random];
     }
     var word3 = word2.Value.ToLower();
     var output = word3.ToArray().Aggregate("", (current, c) => current + "_");
     
+    userInterface.NewGame();
     Console.WriteLine(output);
     
     //when you have not guessed the word right this continues or you type quit
     while (output.Contains('_'))
     {
         var input = Console.ReadLine();
-        inputs.Add(input);
+        currentGameUserInputs.Add(input);
         if (word3.Contains(input))
         {
             var indexes = new List<int>();
-            foreach (var inp in inputs)
+            foreach (var inp in currentGameUserInputs)
             {
                 for (int i = word3.IndexOf(inp); i > -1; i = word3.IndexOf(inp, i + 1))
                 {
